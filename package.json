@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "db:local": "wrangler d1 migrations apply pixel --local",
-    "check": "npm run typecheck && npm test && npm run build"
+    "check": "npm run typecheck && npm test && npm run build",
+    "production:plan": "node scripts/production/provision.mjs",
+    "production:provision": "node --use-env-proxy scripts/production/provision.mjs --apply"
   },
   "dependencies": {
     "better-auth": "^1.0.0",

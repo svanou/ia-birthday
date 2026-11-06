@@ -32,3 +32,5 @@ Les images sont **simulées par copie du dessin** dans le mode local ; aucun pai
 Voir [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) pour la configuration, les secrets requis et les vérifications réelles. Les comptes Cloudflare, Stripe, Resend et OpenAI ne sont pas configurés dans cette session. Le propriétaire n’a pas encore de domaine d’envoi. La plateforme distante et la vente ne sont donc pas actives.
 
 Les trois fêtes pilotes, les coûts IA réels et les documents commerciaux restent à valider avant l’ouverture des ventes. Ne pas confondre un test local réussi avec un paiement ou un e-mail réel vérifié.
+
+Pour créer les services distants avec le workflow préparé : [comptes et configuration de production](docs/PRODUCTION-SETUP.md). `npm run production:plan` affiche les ressources sans requête réseau ni création.
