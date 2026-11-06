@@ -1,0 +1,73 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pixel-pilot",
+  "main": "platform/worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"],
+  },
+  "vars": {
+    "APP_MODE": "local",
+    "APP_URL": "http://localhost:5173",
+    "PILOT_EMAILS": "",
+    "ADMIN_EMAILS": "",
+    "SALES_ENABLED": "false",
+    "LEGAL_READY": "false",
+    "EMAIL_FROM": "Pixel <contact@example.com>",
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pixel",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "platform/migrations",
+    },
+  ],
+  "r2_buckets": [{ "binding": "FILES", "bucket_name": "pixel-private" }],
+  "queues": {
+    "producers": [{ "binding": "GENERATIONS", "queue": "pixel-generations" }],
+    "consumers": [
+      { "queue": "pixel-generations", "max_batch_size": 1, "max_retries": 0 },
+    ],
+  },
+  "triggers": { "crons": ["0 * * * *"] },
+  "env": {
+    "production": {
+      "name": "pixel",
+      "vars": {
+        "APP_MODE": "pilot",
+        "APP_URL": "https://REPLACE.workers.dev",
+        "PILOT_EMAILS": "",
+        "ADMIN_EMAILS": "",
+        "SALES_ENABLED": "false",
+        "LEGAL_READY": "false",
+        "EMAIL_FROM": "Pixel <contact@example.com>",
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "pixel",
+          "database_id": "REPLACE_WITH_D1_ID",
+          "migrations_dir": "platform/migrations",
+        },
+      ],
+      "r2_buckets": [{ "binding": "FILES", "bucket_name": "pixel-private" }],
+      "queues": {
+        "producers": [
+          { "binding": "GENERATIONS", "queue": "pixel-generations" },
+        ],
+        "consumers": [
+          {
+            "queue": "pixel-generations",
+            "max_batch_size": 1,
+            "max_retries": 0,
+          },
+        ],
+      },
+    },
+  },
+}

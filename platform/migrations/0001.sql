@@ -1,0 +1,18 @@
+PRAGMA foreign_keys=ON;
+CREATE TABLE user(id TEXT PRIMARY KEY,name TEXT NOT NULL,email TEXT NOT NULL UNIQUE,emailVerified INTEGER NOT NULL,image TEXT,createdAt INTEGER NOT NULL,updatedAt INTEGER NOT NULL);
+CREATE TABLE session(id TEXT PRIMARY KEY,expiresAt INTEGER NOT NULL,token TEXT NOT NULL UNIQUE,createdAt INTEGER NOT NULL,updatedAt INTEGER NOT NULL,ipAddress TEXT,userAgent TEXT,userId TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE);
+CREATE TABLE account(id TEXT PRIMARY KEY,accountId TEXT NOT NULL,providerId TEXT NOT NULL,userId TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,accessToken TEXT,refreshToken TEXT,idToken TEXT,accessTokenExpiresAt INTEGER,refreshTokenExpiresAt INTEGER,idTokenExpiresAt INTEGER,scope TEXT,password TEXT,createdAt INTEGER NOT NULL,updatedAt INTEGER NOT NULL);
+CREATE TABLE verification(id TEXT PRIMARY KEY,identifier TEXT NOT NULL,value TEXT NOT NULL,expiresAt INTEGER NOT NULL,createdAt INTEGER,updatedAt INTEGER);
+CREATE INDEX verification_identifier ON verification(identifier);
+CREATE TABLE rateLimit(id TEXT PRIMARY KEY,key TEXT NOT NULL UNIQUE,count INTEGER NOT NULL,lastRequest INTEGER NOT NULL);
+CREATE TABLE parties(id TEXT PRIMARY KEY,owner TEXT NOT NULL,theme TEXT NOT NULL DEFAULT 'forest',names TEXT NOT NULL DEFAULT '[]',status TEXT NOT NULL DEFAULT 'paid',purchased_at INTEGER NOT NULL,activate_by INTEGER NOT NULL,activated_at INTEGER,ends_at INTEGER,retain_until INTEGER NOT NULL,step INTEGER NOT NULL DEFAULT 0,story TEXT,story_approved INTEGER NOT NULL DEFAULT 0,payment_id TEXT UNIQUE);
+CREATE INDEX parties_owner ON parties(owner);
+CREATE TABLE uploads(id TEXT PRIMARY KEY,party TEXT NOT NULL REFERENCES parties(id),object_key TEXT NOT NULL,mime TEXT NOT NULL,created_at INTEGER NOT NULL);
+CREATE TABLE jobs(id TEXT PRIMARY KEY,party TEXT NOT NULL REFERENCES parties(id),kind TEXT NOT NULL,alias TEXT NOT NULL,upload TEXT NOT NULL UNIQUE,status TEXT NOT NULL CHECK(status IN ('queued','running','done','failed')),approved INTEGER NOT NULL DEFAULT 0,created_at INTEGER NOT NULL,finished_at INTEGER,object_key TEXT,error TEXT,model TEXT);
+CREATE INDEX jobs_party_status ON jobs(party,kind,status);
+CREATE TABLE pairings(hash TEXT PRIMARY KEY,party TEXT NOT NULL REFERENCES parties(id),role TEXT NOT NULL,expires_at INTEGER NOT NULL);
+CREATE TABLE devices(hash TEXT PRIMARY KEY,party TEXT NOT NULL REFERENCES parties(id),role TEXT NOT NULL,expires_at INTEGER NOT NULL);
+CREATE TABLE events(id TEXT PRIMARY KEY,created_at INTEGER NOT NULL);
+CREATE TABLE audit(id TEXT PRIMARY KEY,actor TEXT NOT NULL,party TEXT NOT NULL,action TEXT NOT NULL,reason TEXT NOT NULL,created_at INTEGER NOT NULL);
+CREATE TABLE orders(id TEXT PRIMARY KEY,owner TEXT NOT NULL,created_at INTEGER NOT NULL,status TEXT NOT NULL DEFAULT 'pending');
+CREATE TABLE local_sessions(hash TEXT PRIMARY KEY,email TEXT NOT NULL,expires_at INTEGER NOT NULL);

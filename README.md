@@ -1,24 +1,34 @@
-# Pixel — Anniversaires créatifs IA
+# Pixel — anniversaire IA animé par les parents
 
-Site statique en français, sans dépendances ni compilation, publié sur https://svanou.github.io/ia-birthday/ via GitHub Pages (main, racine).
+Pilote privé : 39 EUR par fête, jusqu’à dix enfants de 8–12 ans. Préparation et essai avant activation, quatre heures continues, vingt images de fête, trois univers et galerie trente jours.
 
-## Développement
+## Démarrer localement
 
 ```sh
-cd /workspace/ia-birthday
-python3 -m http.server 3000 --bind 0.0.0.0
+npm ci
+npm run db:local
+npm run check
+npm run api  # terminal 1 : serveur Cloudflare local, port 8787
+npm run dev  # terminal 2 : interface React, port 5173
 ```
 
-## Offre choisie
+Les images sont **simulées par copie du dessin** dans le mode local ; aucun paiement réel ni appel IA. Ce mode est refusé par l’API sur un hôte distant.
 
-Une session de 2 heures pour les 8–12 ans, 349 € jusqu’à 8 enfants, puis 25 € par enfant, maximum 12. Même prix en euros pour Genève et le Pays de Gex ; CHF par conversion convenue sur devis. Déplacement dans ces deux zones, matériel d’animation et souvenirs numériques inclus. Pas de réservation automatique : devis et confirmation écrite par e-mail. Aucun paiement en ligne, abonnement, faux témoignage ou outil d’analyse.
+## Architecture
 
-La formule donne une contribution de 264 € pour huit enfants avec l’hypothèse historique de 85 € de frais variables, avant frais fixes et prélèvements. Ces coûts ne sont pas mesurés et doivent être vérifiés sur les premières prestations. Le scénario et les capacités décrits constituent l’offre à préparer, pas un historique de sessions réalisées.
+- `platform/src` : React/Vite, préparation, conducteur, validation, écran collectif, QR, PDF.
+- `platform/worker` : API Hono, Better Auth, Stripe, OpenAI, file de génération et rétention.
+- `platform/migrations` : D1 ; les fichiers sont privés dans R2.
+- `index.html` et `assets/` : présentation publique statique sur GitHub Pages, distincte du serveur.
 
-## Contact et données
+## Validation
 
-Le formulaire prépare un mailto vers svanou@gmail.com, avec copie de secours. Les champs ne sont pas stockés ni envoyés par le site. Aucune police distante ni dépendance tierce.
+`npm run check` : types, tests des droits d’accès et des réservations SQL, compilation.
 
-## Informations restant à fournir par le responsable
+`python platform/tests/browser_smoke.py` : avec les serveurs locaux démarrés et Playwright/Chromium, teste le parcours parent, D1/R2/Queue, QR à usage unique, cloisonnement des familles, validation et PDF. Ce test utilise un dessin artificiel et aucun service externe.
 
-L’identité légale complète, le statut/immatriculation applicable, l’adresse professionnelle, les obligations fiscales, les conditions contractuelles, les durées de conservation et le service IA retenu ne sont pas connus. Le site affiche les informations vérifiables et précise une confirmation écrite avant engagement. Ne pas inventer ces informations ; compléter les mentions légales et documents contractuels avec les données réelles du prestataire. Préparer et valider le matériel, les souvenirs et le conducteur avant d’accepter une session.
+## Mise en service
+
+Voir [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) pour la configuration, les secrets requis et les vérifications réelles. Les comptes Cloudflare, Stripe, Resend et OpenAI ne sont pas configurés dans cette session. Le propriétaire n’a pas encore de domaine d’envoi. La plateforme distante et la vente ne sont donc pas actives.
+
+Les trois fêtes pilotes, les coûts IA réels et les documents commerciaux restent à valider avant l’ouverture des ventes. Ne pas confondre un test local réussi avec un paiement ou un e-mail réel vérifié.

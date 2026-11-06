@@ -1,0 +1,12 @@
+exclude:
+  - platform
+  - scripts
+  - docs
+  - node_modules
+  - dist
+  - package.json
+  - package-lock.json
+  - tsconfig.json
+  - vitest.config.ts
+  - wrangler.jsonc
+  - README.md
